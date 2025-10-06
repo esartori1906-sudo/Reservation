@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Gestion des créneaux</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f0f0f0; }
+        h1 { color: #222; }
+        table { border-collapse: collapse; width: 80%; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #444; color: white; }
+        form { display: inline; }
+        button { padding: 5px 10px; cursor: pointer; border: none; background-color: #dc3545; color: white; border-radius: 5px; }
+        button:hover { background-color: #b02a37; }
+    </style>
+</head>
+<body>
+    <h1>Panneau administrateur</h1>
+    <a href="/">← Retour à la page publique</a>
+
+    <table>
+        <tr>
+            <th>Jour</th>
+            <th>Heure</th>
+            <th>Parent</th>
+            <th>Action</th>
+        </tr>
+        {% for c in creneaux %}
+        <tr>
+            <td>{{ c.jour }}</td>
+            <td>{{ c.heure }}</td>
+            <td>{{ c.parent if c.parent else "Libre" }}</td>
+            <td>
+                {% if c.parent %}
+                <form action="/admin/liberer/{{ c.id }}" method="POST">
+                    <button type="submit">Libérer</button>
+                </form>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

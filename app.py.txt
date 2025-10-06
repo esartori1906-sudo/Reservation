@@ -1,0 +1,28 @@
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
+# Créneaux disponibles
+creneaux = {
+    "Lundi 10h": None,
+    "Lundi 11h": None,
+    "Mardi 14h": None,
+    "Mardi 15h": None,
+    "Mercredi 16h": None,
+    "Mercredi 17h": None
+}
+
+@app.route("/")
+def index():
+    return render_template("index.html", creneaux=creneaux)
+
+@app.route("/reserver", methods=["POST"])
+def reserver():
+    nom = request.form.get("nom")
+    creneau = request.form.get("creneau")
+    if creneaux[creneau] is None:
+        creneaux[creneau] = nom
+    return redirect(url_for("index"))
+
+if __name__ == "__main__":
+    app.run(debug=True)

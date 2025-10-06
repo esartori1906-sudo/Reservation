@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Réservation de créneaux</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #fafafa;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        form {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        input[type="text"] {
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Réservation de créneaux</h1>
+
+    <table>
+        <tr>
+            <th>Jour</th>
+            <th>Heure</th>
+            <th>Parent</th>
+            <th>Action</th>
+        </tr>
+        {% for c in creneaux %}
+        <tr>
+            <td>{{ c.jour }}</td>
+            <td>{{ c.heure }}</td>
+            <td>{{ c.parent if c.parent else "Libre" }}</td>
+            <td>
+                {% if not c.parent %}
+                <form action="/reserver/{{ c.id }}" method="POST">
+                    <input type="text" name="nom_parent" placeholder="Votre nom" required>
+                    <button type="submit">Réserver</button>
+                </form>
+                {% else %}
+                <form action="/annuler/{{ c.id }}" method="POST">
+                    <button type="submit" style="background-color:#dc3545;">Annuler</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
