@@ -23,11 +23,17 @@ def init_db():
         c.executemany(
             "INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, NULL)",
             [
-                ("Lundi", "17h00"),
-                ("Mardi", "18h00"),
-                ("Mercredi", "17h30"),
-                ("Jeudi", "18h30"),
-                ("Vendredi", "16h00"),
+                ("Lundi", "14h45"),
+                ("Lundi", "16h00"),
+                ("Lundi", "17h15"),
+                ("Lundi", "18h30"),
+                ("Mardi", "18h45"),
+                ("Mercredi", "18h45"),
+                ("Jeudi", "15h30"),
+                ("Jeudi", "16h45"),
+                ("Jeudi", "18h00"),
+                ("Vendredi", "17h15"),
+                ("Vendredi", "18h30"),
             ]
         )
         conn.commit()
