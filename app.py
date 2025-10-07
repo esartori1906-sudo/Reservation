@@ -1,3 +1,19 @@
+import sqlite3, os
+
+db_path = os.path.join(os.path.dirname(__file__), "database.db")
+conn = sqlite3.connect(db_path)
+c = conn.cursor()
+c.execute("""
+    CREATE TABLE IF NOT EXISTS creneaux (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        heure TEXT,
+        parent TEXT
+    )
+""")
+conn.commit()
+conn.close()
+
 from flask import Flask, render_template, request, redirect
 import sqlite3
 import os
