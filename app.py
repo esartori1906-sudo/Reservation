@@ -4,7 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# --- Définition du chemin complet de la base ---
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
 
 def init_db():
@@ -23,7 +22,7 @@ def init_db():
     conn.close()
     print("✅ Base initialisée ou déjà existante.")
 
-# Appel avant tout
+# Appel au démarrage
 init_db()
 
 def get_db_connection():
@@ -64,6 +63,12 @@ def delete_creneau(id):
     conn.commit()
     conn.close()
     return jsonify({"message": f"Créneau {id} supprimé"}), 200
+
+# ✅ Route spéciale pour initialiser manuellement la base
+@app.route("/init")
+def force_init():
+    init_db()
+    return jsonify({"message": "Base (re)créée avec succès"}), 200
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
