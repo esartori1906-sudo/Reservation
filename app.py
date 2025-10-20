@@ -2,6 +2,40 @@ from flask import Flask, jsonify, request
 import sqlite3
 import os
 
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+
+    # Création de la table si elle n'existe pas
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS creneaux (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            heure TEXT NOT NULL,
+            parent TEXT
+        )
+    ''')
+
+    # Vérifie si la table est vide
+    c.execute("SELECT COUNT(*) FROM creneaux")
+    if c.fetchone()[0] == 0:
+        # Si vide, on ajoute des exemples de créneaux
+        c.executemany("INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, ?)", [
+            ('Lundi', '17h00', 'Disponible'),
+            ('Mardi', '18h00', 'Disponible'),
+            ('Mercrdi', '14h00', 'Disponible'),
+            ('Vendredi', '09h00', 'Disponible'),
+        ])
+        print("✅ Base de données initialisée avec des créneaux.")
+
+    conn.commit()
+    conn.close()
+
+# Appeler la fonction d'initialisation
+init_db()
+
 app = Flask(__name__)
 
 DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
