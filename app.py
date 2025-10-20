@@ -1,110 +1,70 @@
-import sqlite3, os
-
-db_path = os.path.join(os.path.dirname(__file__), "database.db")
-conn = sqlite3.connect(db_path)
-c = conn.cursor()
-c.execute("""
-    CREATE TABLE IF NOT EXISTS creneaux (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TEXT,
-        heure TEXT,
-        parent TEXT
-    )
-""")
-conn.commit()
-conn.close()
-
-from flask import Flask, render_template, request, redirect
+from flask import Flask, jsonify, request
 import sqlite3
 import os
 
 app = Flask(__name__)
 
-DB_PATH = "slots.db"
+# --- Définition du chemin complet de la base ---
+DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
 
-# --- Création de la base de données si elle n'existe pas ---
 def init_db():
-    if not os.path.exists(DB_PATH):
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("""
-            CREATE TABLE creneaux (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                heure TEXT,
-                parent TEXT
-            )
-        """)
-        # Exemples de créneaux (à modifier selon ton planning)
-        c.executemany(
-            "INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, NULL)",
-            [
-                ("Lundi", "14h45"),
-                ("Lundi", "16h00"),
-                ("Lundi", "17h15"),
-                ("Lundi", "18h30"),
-                ("Mardi", "18h45"),
-                ("Mercredi", "18h45"),
-                ("Jeudi", "15h30"),
-                ("Jeudi", "16h45"),
-                ("Jeudi", "18h00"),
-                ("Vendredi", "17h15"),
-                ("Vendredi", "18h30"),
-            ]
+    print("🔧 Initialisation de la base de données...")
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS creneaux (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            heure TEXT NOT NULL,
+            parent TEXT
         )
-        conn.commit()
-        conn.close()
+    """)
+    conn.commit()
+    conn.close()
+    print("✅ Base initialisée ou déjà existante.")
+
+# Appel avant tout
+init_db()
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
     return conn
 
-# --- Page principale ---
-@app.route('/')
+@app.route("/")
 def index():
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT id, date AS jour, heure, parent FROM creneaux")
-    creneaux = [dict(id=row[0], jour=row[1], heure=row[2], parent=row[3]) for row in c.fetchall()]
+    rows = c.fetchall()
     conn.close()
-    return render_template('index.html', creneaux=creneaux)
+    return jsonify([dict(row) for row in rows])
 
-# --- Réserver un créneau ---
-@app.route('/reserver/<int:slot_id>', methods=['POST'])
-def reserver(slot_id):
-    parent = request.form['nom_parent']
+@app.route("/add", methods=["POST"])
+def add_creneau():
+    data = request.get_json()
+    date = data.get("date")
+    heure = data.get("heure")
+    parent = data.get("parent")
+
+    if not date or not heure:
+        return jsonify({"error": "date et heure sont obligatoires"}), 400
+
     conn = get_db_connection()
-    c = conn.cursor()
-    # On ne réserve que si le créneau est libre
-    c.execute("UPDATE creneaux SET parent=? WHERE id=? AND parent IS NULL", (parent, slot_id))
+    conn.execute("INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, ?)", (date, heure, parent))
     conn.commit()
     conn.close()
-    return redirect('/')
 
-# --- Page admin pour libérer des créneaux ---
-@app.route('/admin')
-def admin():
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT id, date AS jour, heure, parent FROM creneaux")
-    creneaux = [dict(id=row[0], jour=row[1], heure=row[2], parent=row[3]) for row in c.fetchall()]
-    conn.close()
-    return render_template('admin.html', creneaux=creneaux)
+    return jsonify({"message": "Créneau ajouté avec succès"}), 201
 
-@app.route('/admin/liberer/<int:slot_id>', methods=['POST'])
-def liberer(slot_id):
+@app.route("/delete/<int:id>", methods=["DELETE"])
+def delete_creneau(id):
     conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("UPDATE creneaux SET parent=NULL WHERE id=?", (slot_id,))
+    conn.execute("DELETE FROM creneaux WHERE id = ?", (id,))
     conn.commit()
     conn.close()
-    return redirect('/admin')
+    return jsonify({"message": f"Créneau {id} supprimé"}), 200
 
-
-# --- Point d'entrée principal ---
-if __name__ == '__main__':
-    init_db()
-    from os import environ
-    # 🔧 Pour Render : écouter sur le port attribué dynamiquement
-    port = int(environ.get("PORT", 5000))
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
