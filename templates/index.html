@@ -37,7 +37,7 @@
             <td>
                 {% if not parent %}
                     <form action="/reserver/{{ id }}" method="post">
-                        <input type="text" name="nom_enfant" placeholder="Nom de l'enfant" required>
+                        <input type="text" name="nom_enfant" placeholder="Nom de l'élève" required>
                         <button type="submit">Réserver</button>
                     </form>
                 {% else %}

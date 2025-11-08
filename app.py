@@ -19,20 +19,23 @@ def init_db():
     c.execute("SELECT COUNT(*) FROM creneaux")
     if c.fetchone()[0] == 0:
         c.executemany("INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, ?)", [
-            ('03/11/2025 Lundi', '18h15', None),
-            ('04/11/2025 Mardi', '16h15', None),
-            ('04/11/2025 Mardi', '17h30', None),
-            ('04/11/2025 Mardi', '18h45', None),
-            ('05/11/2025 Mercredi', '17h45', None),
-            ('05/11/2025 Mercredi', '19h00', None),
-            ('06/11/2025 Jeudi', '15h00', None),
-            ('06/11/2025 Jeudi', '18h45', None),
-            ('07/11/2025 Vendredi', '15h15', None),
-            ('07/11/2025 Vendredi', '16h30', None),
-            ('07/11/2025 Vendredi', '17h45', None),
-            ('07/11/2025 Vendredi', '19h00', None),
-            ('08/11/2025 Samedi', '09h30', None),
-            ('08/11/2025 Samedi', '10h45', None),
+            ('11/11/2025 Mardi', '14h00', None),
+            ('11/11/2025 Mardi', '15h15', None),
+            ('11/11/2025 Mardi', '16h30', None),
+            ('11/11/2025 Mardi', '17h45', None),
+            ('11/11/2025 Mardi', '19h00', None),
+            ('12/11/2025 Mercredi', '17h15', None),
+            ('12/11/2025 Mercredi', '18h30', None),
+            ('13/11/2025 Jeudi', '14h00', None),
+            ('13/11/2025 Jeudi', '15h15', None),
+            ('13/11/2025 Jeudi', '16h30', None),
+            ('13/11/2025 Jeudi', '17h45', None),
+            ('13/11/2025 Jeudi', '19h00', None),
+            ('14/11/2025 Vendredi', '16h15', None),
+            ('14/11/2025 Vendredi', '17h30', None),
+            ('14/11/2025 Vendredi', '18h45', None),
+            ('15/11/2025 Samedi', '09h45', None),
+            ('15/11/2025 Samedi', '11h00', None),
         ])
     conn.commit()
     conn.close()
