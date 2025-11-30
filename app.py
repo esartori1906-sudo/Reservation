@@ -30,6 +30,7 @@ def init_db():
             ('06/12/2025 Samedi', '15h15', None),
             ('06/12/2025 Samedi', '16h30', None),
             ('06/12/2025 Samedi', '17h45', None),
+        ])
     conn.commit()
     conn.close()
 
