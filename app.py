@@ -20,11 +20,11 @@ def init_db():
     if c.fetchone()[0] == 0:
         c.executemany("INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, ?)", [
             ('02/12/2025 Mardi', '18h15', None),
-            ('04/12/2025 Jeudi', '9h30', None),
+            ('04/12/2025 Jeudi', '09h30', None),
             ('04/12/2025 Jeudi', '10h45', None),
             ('05/12/2025 Vendredi', '17h15', None),
             ('05/12/2025 Vendredi', '18h30', None),
-            ('06/12/2025 Samedi', '9h45', None),
+            ('06/12/2025 Samedi', '09h45', None),
             ('06/12/2025 Samedi', '11h00', None),
             ('06/12/2025 Samedi', '14h00', None),
             ('06/12/2025 Samedi', '15h15', None),
