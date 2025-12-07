@@ -19,9 +19,6 @@ def init_db():
     c.execute("SELECT COUNT(*) FROM creneaux")
     if c.fetchone()[0] == 0:
         c.executemany("INSERT INTO creneaux (date, heure, parent) VALUES (?, ?, ?)", [
-            ('04/12/2025 Lundi', '09h30', None),
-            ('04/12/2025 Lundi', '10h45', None),
-            ('04/12/2025 Lundi', '14h30', None),
             ('09/12/2025 Mardi', '17h45', None),
             ('09/12/2025 Mardi', '19h00', None),
             ('10/12/2025 Mercredi', '14h00', None),
